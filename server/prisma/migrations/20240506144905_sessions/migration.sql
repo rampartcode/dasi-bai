@@ -1,0 +1,24 @@
+BEGIN TRY
+
+BEGIN TRAN;
+
+-- CreateTable
+CREATE TABLE [dbo].[sessions] (
+    [id] NVARCHAR(1000) NOT NULL,
+    [token] NVARCHAR(1000) NOT NULL,
+    [loggedAt] NVARCHAR(1000) NOT NULL,
+    CONSTRAINT [sessions_pkey] PRIMARY KEY CLUSTERED ([id])
+);
+
+COMMIT TRAN;
+
+END TRY
+BEGIN CATCH
+
+IF @@TRANCOUNT > 0
+BEGIN
+    ROLLBACK TRAN;
+END;
+THROW
+
+END CATCH

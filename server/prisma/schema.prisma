@@ -1,0 +1,322 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id       String   @id @default(cuid())
+  token    String   @unique
+  username String   @unique
+  role     String
+  loggedAt DateTime @default(now())
+
+  @@map("sessions")
+}
+
+model LdapSetting {
+  id Int @id @default(autoincrement())
+
+  serverUrl         String
+  adminDn           String
+  adminPassword     String
+  userSearchBase    String
+  usernameAttribute String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model IncidentResponse {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  mes                                    String
+  data                                   DateTime @map("month_date")
+  incidentes_reportados                  Int
+  incidentes_resolvidos_por_intervencao  Int
+  incidentes_resolvidos_por_acao_tecnica Int
+  incidentes_pendentes_por_investigacao  Int
+  falsos_positivos                       Int
+}
+
+model Darktrace {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+
+  time        DateTime
+  username    String
+  ip          String
+  method      String
+  status      Int
+  endpoint    String
+  description String
+
+  @@map("darktrace")
+}
+
+model ImpervaWaf {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+
+  alert_start_time      DateTime
+  user_name_applicative String
+  user_name_db          String
+  source_ip             String
+  source_app            String
+  url                   String
+  immediate_action      String
+  alert_description     String
+  alert_type            String
+  num_of_events         Int
+
+  @@map("imperva_waf")
+}
+
+model ImpervaDam {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+
+  num_of_events Int
+
+  @@map("imperva_dam")
+}
+
+model CheckpointHarmony {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+
+  receive_time DateTime
+  quarantined  Boolean
+  subject      String
+  recipients   String
+  sender       String
+  server_ip    String
+  client_ip    String
+  links        String
+
+  @@map("checkpoint_harmony")
+}
+
+model CheckpointFwAttack {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+
+  severity String
+  blade    String
+  logs     Int
+  attack   String
+
+  @@map("checkpoint_fw_attack")
+}
+
+model CheckpointFw {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+
+  blade String
+  logs  Int
+
+  @@map("checkpoint_fw")
+}
+
+model Portnox {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+
+  title             String   @db.VarChar(200)
+  start_info        DateTime
+  events_count      String
+  time_stamp        String
+  device_name       String
+  device_ip         String
+  device_os         String   @db.VarChar(150)
+  mac_address       String   @db.VarChar(20)
+  network_entity_ip String
+  nv_unit           String
+  nv_port           Int
+  action            String
+  event_name        String
+  connected         Boolean
+  reocurrences      Int
+  vr_os             String
+  status_events     String
+
+  @@map("portnox")
+}
+
+model WindowsDefender {
+  Id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+
+  severity         String
+  investigated_new Boolean
+  first_activity   DateTime
+  alert_name       String
+  detect_source    String
+  last_activity    DateTime
+  category         String
+  status           String
+  classification   String
+  determination    String
+  assigned         String
+
+  @@map("windows_defender")
+}
+
+model AdAudit {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user_name               String   @db.Text
+  client_ip_address       String   @db.Text
+  client_host_name        String   @db.Text
+  domain_controller       String   @db.Text
+  logon_time              DateTime
+  event_type_text         String   @db.Text
+  failure_reason          String   @db.Text
+  client_port             Int
+  user_distinguish_name   String   @db.Text
+  pre_authentication_type String   @db.Text
+  failure_type            String   @db.Text
+  logon_service           String   @db.Text
+  monitor_id              Int
+
+  @@map("ad_audit")
+}
+
+model tablePaloAlto {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+
+  domain                            Int
+  receive_time                      DateTime
+  serial                            String
+  type                              String
+  threat_content_type               String
+  config_version                    String
+  generate_time                     DateTime
+  source_address                    String
+  destination_address               String
+  nat_source_ip                     String
+  nat_destination_ip                String
+  rule                              String
+  source_user                       String
+  destination_user                  String
+  application                       String
+  virtual_system                    String
+  source_zone                       String
+  destination_zone                  String
+  inbound_interface                 String
+  outbound_interface                String
+  log_action                        String
+  time_logged                       DateTime
+  session_id                        Int
+  repeat_count                      Int
+  source_port                       Int
+  destination_port                  Int
+  nat_source_port                   Int
+  nat_destination_port              Int
+  flags                             String
+  ip_protocol                       String
+  action                            String
+  url_filename                      String
+  threat_content_name               String
+  category                          String
+  severity                          String
+  direction                         String
+  sequence_number                   String
+  action_flags                      String
+  source_country                    String
+  destination_country               String
+  contenttype                       String
+  pcap_id                           Int
+  filedigest                        String
+  cloud                             String
+  url_idx                           Int
+  user_agent                        String
+  filetype                          String
+  xff                               String
+  referer                           String
+  sender                            String
+  subject                           String
+  recipient                         String
+  reportid                          Int
+  dg_hierarchy_level_1              Int
+  dg_hierarchy_level_2              Int
+  dg_hierarchy_level_3              Int
+  dg_hierarchy_level_4              Int
+  virtual_system_name               String
+  device_name                       String
+  file_url                          String
+  source_vm_uuid                    String
+  destination_vm_uuid               String
+  http_method                       String
+  tunnel_id_imsi                    Int
+  monitor_tag_imei                  String
+  parent_session_id                 Int
+  parent_session_start_time         String
+  tunnel                            String
+  thr_category                      String
+  contentver                        String
+  sig_flags                         String
+  sctp_association_id               Int
+  payload_protocol_id               String
+  http_headers                      String
+  url_category_list                 String
+  uuid_for_rule                     String
+  http_2_connection                 Int
+  dynusergroup_name                 String
+  xff_address                       String
+  source_device_category            String
+  source_device_profile             String
+  source_device_model               String
+  source_device_vendor              String
+  source_device_os_family           String
+  source_device_os_version          String
+  source_hostname                   String
+  source_mac_address                String
+  destination_device_category       String
+  destination_device_profile        String
+  destination_device_model          String
+  destination_device_vendor         String
+  destination_device_os_family      String
+  destination_device_os_version     String
+  destination_hostname              String
+  destination_mac_address           String
+  container_id                      String
+  pod_namespace                     String
+  pod_name                          String
+  source_external_dynamic_list      String
+  destination_external_dynamic_list String
+  host_id                           String
+  serial_number                     String
+  domain_edl                        String
+  source_dynamic_address_group      String
+  destination_dynamic_address_group String
+  partial_hash                      Int
+  high_res_timestamp                DateTime
+  reason                            String
+  justification                     String
+  nssai_sst                         String
+  subcategory_of_app                String
+  category_of_app                   String
+  technology_of_app                 String
+  risk_of_app                       Int
+  characteristic_of_app             String
+  container_of_app                  String
+  tunneled_app                      String
+  saas_of_app                       Boolean
+  sanctioned_state_of_app           Boolean
+
+  @@map("table_palo_alto")
+}

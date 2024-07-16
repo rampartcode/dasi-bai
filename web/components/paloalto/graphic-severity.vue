@@ -1,0 +1,133 @@
+<script setup lang="ts">
+const data = inject("data");
+
+const chartOptions = {
+  chart: {
+    id: "severity-palo-alto",
+    foreColor: "rgba(255, 255, 255, 0.65)",
+    type: "bar",
+    styledMode: true,
+    zoom: {
+      enabled: false,
+    },
+    toolbar: {
+      show: false,
+    },
+    dropShadow: {
+      enabled: false,
+      top: 3,
+      left: 14,
+      blur: 4,
+      opacity: 0.1,
+    },
+  },
+  dataLabels: {
+    enabled: false,
+  },
+  title: {
+    text: "Impacto dos Eventos",
+    align: "center",
+    style: {
+      fontSize: "20px",
+      color: "#FAFAFA",
+    },
+  },
+  colors: ["#FFFFFFA8"],
+  xaxis: {
+    type: "category",
+    labels: {
+      style: {
+        fontSize: "9px",
+      },
+    },
+  },
+  yaxis: {
+    title: {
+      text: "Range",
+    },
+  },
+  tooltip: {
+    enabled: true,
+    theme: "dark",
+    shared: true,
+    followCursor: false,
+    intersect: false,
+    inverseOrder: false,
+    hideEmptySeries: true,
+    fillSeriesColor: false,
+    style: {
+      fontSize: "12px",
+      fontFamily: undefined,
+    },
+    onDatasetHover: {
+      highlightDataSeries: false,
+    },
+    x: {
+      show: true,
+      format: "dd MMM",
+      formatter: undefined,
+    },
+    z: {
+      formatter: "{ point.y:.1f }%",
+      title: "Size: ",
+    },
+    marker: {
+      show: true,
+    },
+    fixed: {
+      enabled: true,
+      position: "topRight",
+      offsetX: 0,
+      offsetY: 0,
+    },
+  },
+  grid: {
+    borderColor: "rgba(255, 255, 255, 0.12)",
+    show: true,
+  },
+  plotOptions: {
+    bar: {
+      columnWidth: "60%",
+    },
+  },
+};
+
+const series = ref([
+  {
+    name: "Eventos",
+    data: [
+      {
+        x: "Baixo",
+        y: data?.value.severity?.low,
+      },
+      {
+        x: "Médio",
+        y: data?.value.severity?.medium,
+      },
+      {
+        x: "Alto",
+        y: data?.value.severity?.high,
+      },
+      {
+        x: "Crítico",
+        y: data?.value.severity?.critical,
+      },
+    ],
+  },
+]);
+</script>
+
+<template>
+  <div class="card shadow-none bg-transparent">
+    <div>
+      <apexchart
+        id="severity-palo-alto"
+        height="350"
+        type="bar"
+        :options="chartOptions"
+        :series="series"
+      >
+      </apexchart>
+    </div>
+  </div>
+</template>
