@@ -33,7 +33,7 @@ const onOpenModalAvatar = () => {
       />
       <div class="hidden flex-1 xl:flex flex-col gap-1 items-start">
         <span class="block text-white font-semibold leading-none">
-          { user.username }
+          {{ user.username }}
         </span>
         <span class="block text-white/70 leading-none">admin</span>
       </div>

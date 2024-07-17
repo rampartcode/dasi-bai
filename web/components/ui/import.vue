@@ -53,8 +53,6 @@ const onSubmit = async () => {
 
   const formData = new FormData(forms);
 
-  console.log(formData);
-
   const { status, error } = await useMyFetch<any>("data", {
     method: "POST",
     contentType: "form-data",
