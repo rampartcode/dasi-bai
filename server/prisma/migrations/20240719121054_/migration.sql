@@ -3,6 +3,62 @@ BEGIN TRY
 BEGIN TRAN;
 
 -- CreateTable
+CREATE TABLE [dbo].[users] (
+    [id] NVARCHAR(1000) NOT NULL,
+    [firstName] NVARCHAR(1000) NOT NULL,
+    [lastName] NVARCHAR(1000) NOT NULL,
+    [email] NVARCHAR(1000) NOT NULL,
+    [username] NVARCHAR(1000) NOT NULL,
+    [password] NVARCHAR(1000) NOT NULL CONSTRAINT [users_password_df] DEFAULT 'none',
+    [roles] NVARCHAR(1000) NOT NULL,
+    [isConfigure] BIT NOT NULL CONSTRAINT [users_isConfigure_df] DEFAULT 0,
+    [createdAt] DATETIME2 NOT NULL CONSTRAINT [users_createdAt_df] DEFAULT CURRENT_TIMESTAMP,
+    [updatedAt] DATETIME2 NOT NULL,
+    CONSTRAINT [users_pkey] PRIMARY KEY CLUSTERED ([id]),
+    CONSTRAINT [users_email_key] UNIQUE NONCLUSTERED ([email]),
+    CONSTRAINT [users_username_key] UNIQUE NONCLUSTERED ([username])
+);
+
+-- CreateTable
+CREATE TABLE [dbo].[sessions] (
+    [id] NVARCHAR(1000) NOT NULL,
+    [token] NVARCHAR(1000) NOT NULL,
+    [username] NVARCHAR(1000) NOT NULL,
+    [role] NVARCHAR(1000) NOT NULL,
+    [loggedAt] DATETIME2 NOT NULL CONSTRAINT [sessions_loggedAt_df] DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT [sessions_pkey] PRIMARY KEY CLUSTERED ([id]),
+    CONSTRAINT [sessions_token_key] UNIQUE NONCLUSTERED ([token]),
+    CONSTRAINT [sessions_username_key] UNIQUE NONCLUSTERED ([username])
+);
+
+-- CreateTable
+CREATE TABLE [dbo].[LdapSetting] (
+    [id] INT NOT NULL IDENTITY(1,1),
+    [serverUrl] NVARCHAR(1000) NOT NULL,
+    [adminDn] NVARCHAR(1000) NOT NULL,
+    [adminPassword] NVARCHAR(1000) NOT NULL,
+    [userSearchBase] NVARCHAR(1000) NOT NULL,
+    [usernameAttribute] NVARCHAR(1000) NOT NULL,
+    [createdAt] DATETIME2 NOT NULL CONSTRAINT [LdapSetting_createdAt_df] DEFAULT CURRENT_TIMESTAMP,
+    [updatedAt] DATETIME2 NOT NULL,
+    CONSTRAINT [LdapSetting_pkey] PRIMARY KEY CLUSTERED ([id])
+);
+
+-- CreateTable
+CREATE TABLE [dbo].[IncidentResponse] (
+    [id] NVARCHAR(1000) NOT NULL,
+    [createdAt] DATETIME2 NOT NULL CONSTRAINT [IncidentResponse_createdAt_df] DEFAULT CURRENT_TIMESTAMP,
+    [mes] NVARCHAR(1000) NOT NULL,
+    [month_date] DATETIME2 NOT NULL,
+    [incidentes_reportados] INT NOT NULL,
+    [incidentes_resolvidos_por_intervencao] INT NOT NULL,
+    [incidentes_resolvidos_por_acao_tecnica] INT NOT NULL,
+    [incidentes_pendentes_por_investigacao] INT NOT NULL,
+    [falsos_positivos] INT NOT NULL,
+    CONSTRAINT [IncidentResponse_pkey] PRIMARY KEY CLUSTERED ([id])
+);
+
+-- CreateTable
 CREATE TABLE [dbo].[darktrace] (
     [id] INT NOT NULL IDENTITY(1,1),
     [createdAt] DATETIME2 NOT NULL CONSTRAINT [darktrace_createdAt_df] DEFAULT CURRENT_TIMESTAMP,
@@ -119,23 +175,23 @@ CREATE TABLE [dbo].[windows_defender] (
 );
 
 -- CreateTable
-CREATE TABLE [dbo].[table_ad_audit] (
+CREATE TABLE [dbo].[ad_audit] (
     [id] INT NOT NULL IDENTITY(1,1),
-    [created_at] DATETIME2 NOT NULL CONSTRAINT [table_ad_audit_created_at_df] DEFAULT CURRENT_TIMESTAMP,
-    [user_name] NVARCHAR(1000) NOT NULL,
-    [client_ip_address] NVARCHAR(1000) NOT NULL,
-    [client_host_name] NVARCHAR(1000) NOT NULL,
-    [domain_controller] NVARCHAR(1000) NOT NULL,
+    [created_at] DATETIME2 NOT NULL CONSTRAINT [ad_audit_created_at_df] DEFAULT CURRENT_TIMESTAMP,
+    [user_name] TEXT NOT NULL,
+    [client_ip_address] TEXT NOT NULL,
+    [client_host_name] TEXT NOT NULL,
+    [domain_controller] TEXT NOT NULL,
     [logon_time] DATETIME2 NOT NULL,
-    [event_type_text] NVARCHAR(1000) NOT NULL,
-    [failure_reason] NVARCHAR(1000) NOT NULL,
+    [event_type_text] TEXT NOT NULL,
+    [failure_reason] TEXT NOT NULL,
     [client_port] INT NOT NULL,
-    [user_distinguish_name] NVARCHAR(1000) NOT NULL,
-    [pre_authentication_type] INT NOT NULL,
-    [failure_type] NVARCHAR(1000) NOT NULL,
-    [logon_service] NVARCHAR(1000) NOT NULL,
+    [user_distinguish_name] TEXT NOT NULL,
+    [pre_authentication_type] TEXT NOT NULL,
+    [failure_type] TEXT NOT NULL,
+    [logon_service] TEXT NOT NULL,
     [monitor_id] INT NOT NULL,
-    CONSTRAINT [table_ad_audit_pkey] PRIMARY KEY CLUSTERED ([id])
+    CONSTRAINT [ad_audit_pkey] PRIMARY KEY CLUSTERED ([id])
 );
 
 -- CreateTable

@@ -13,6 +13,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id       String @id @default(cuid())
+  name     String
+  email    String @unique
+  username String @unique
+  password String @default("none")
+
+  roles       String
+  isConfigure Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
 model Session {
   id       String   @id @default(cuid())
   token    String   @unique

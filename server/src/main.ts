@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { config } from './config/config';
+import { config } from './config';
 import { ValidationPipe } from '@nestjs/common';
 
 const PORT = config.SERVER_PORT;

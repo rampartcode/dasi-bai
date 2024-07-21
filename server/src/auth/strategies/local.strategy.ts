@@ -6,14 +6,16 @@ import {
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
 import { AuthService } from '../auth.service';
-import { PrismaService } from 'src/libs/prisma';
+
 import * as ldapAuth from 'ldap-authentication';
+import { compareSync } from 'bcrypt';
+import { PrismaService } from 'src/libs/prisma';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(
-    private readonly authService: AuthService,
     private readonly prisma: PrismaService,
+    private readonly authService: AuthService,
   ) {
     super({
       usernameField: 'username',
@@ -22,15 +24,55 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 
   async validate(username: string, password: string) {
     try {
-      const user = await this.ldapAuth(username, password);
+      return await this.localAuth(username, password);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async localAuth(username: string, psswd: string) {
+    try {
+      const user = await this.prisma.user.findFirst({
+        where: {
+          username,
+        },
+      });
 
       if (!user) {
-        throw new UnauthorizedException('Invalid username or password.');
+        throw new UnauthorizedException(
+          'Usuário não encontrado e/ou autorizado.',
+        );
       }
 
-      return user;
+      if (!user.isConfigure) {
+        const usr = await this.ldapAuth(username, psswd);
 
-      // return { name: 'nangazaki', roles: 'admin' };
+        if (!usr) {
+          await this.prisma.user.delete({
+            where: {
+              username,
+            },
+          });
+
+          throw new UnauthorizedException(
+            'Nome do usuário ou palavra-passe errdada.',
+          );
+        }
+
+        return usr;
+      }
+
+      const isPasswordMatched = compareSync(psswd, user.password);
+
+      if (!isPasswordMatched) {
+        throw new UnauthorizedException(
+          'Nome do usuário ou palavra-passe errdada.',
+        );
+      }
+
+      const { password, ...usr } = user;
+
+      return usr;
     } catch (error) {
       throw error;
     }

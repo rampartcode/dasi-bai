@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { DataModule } from './app/data/data.module';
 import { ThrottlerModule, ThrottlerOptions } from '@nestjs/throttler';
-import { config } from 'src/config/config';
+import { config } from 'src/config';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from './app/config/config.module';
+import { UserModule } from './app/user/user.module';
 
 @Module({
   imports: [
@@ -18,8 +18,9 @@ import { ConfigModule } from './app/config/config.module';
     AuthModule,
     DataModule,
     ConfigModule,
+    UserModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [],
 })
 export class AppModule {}

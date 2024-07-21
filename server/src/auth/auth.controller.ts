@@ -15,9 +15,6 @@ export class AuthController {
   @UseGuards(AuthGuard('jwt'))
   @Get('user-logged')
   async getUserLogged(@Req() req: any) {
-    const token = req.headers.authorization.split(' ')[1];
-
-    console.log(token);
-    return this.authService.getUserLogged(req.user, token);
+    return this.authService.getUserLogged(req.user);
   }
 }
