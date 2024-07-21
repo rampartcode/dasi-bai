@@ -1,17 +1,26 @@
 import { defineStore } from "pinia";
 
-export type UserSession = {
-  id: string;
-  username: string;
-  role: string;
-  token: string;
-  loggedAt: string;
-};
+export interface User {
+  id: string
+  name: string
+  email: string
+  username: string
+  roles: string
+  isConfigure: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export interface LoginResponse {
+  user: User
+  token: string
+}
+
 
 export const useAppUser = defineStore("user", () => {
-  const user = ref<UserSession | null>(null);
+  const user = ref<User | null>(null);
 
-  const storeUser = (data: UserSession) => {
+  const storeUser = (data: User) => {
     user.value = data;
   };
 

@@ -86,7 +86,10 @@ onUnmounted(() => {
         :active="menuActive"
         class=""
       />
-      <li @click="useAppModalStore().onModalResponse(true)">
+      <li
+        v-if="canActive(['admin', 'super_analist'])"
+        @click="useAppModalStore().onModalResponse(true)"
+      >
         <nuxt-link id="nav" class="cursor-pointer">
           <div class="parent-icon">
             <Icon name="bx:cloud-download" />
@@ -103,10 +106,6 @@ onUnmounted(() => {
         </nuxt-link>
       </li>
     </ul>
-
-    <!-- <div class="absolute left-4 bottom-3">
-      Sessão: 
-    </div> -->
   </div>
 </template>
 

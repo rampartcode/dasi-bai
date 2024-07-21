@@ -2,6 +2,7 @@
 import * as yup from "yup";
 import { toast } from "vue3-toastify";
 import { useForm } from "vee-validate";
+import type { LoginResponse } from "@/stores/app.user";
 
 const { defineField, handleSubmit, errors, isSubmitting } = useForm({
   validationSchema: yup.object({
@@ -17,23 +18,31 @@ const [username, usernameAttrs] = defineField("username");
 const [password, passwordAttrs] = defineField("password");
 
 const onSubmit = handleSubmit(async (values) => {
-  const { data, status, error } = await useMyFetch<any>("auth/login", {
-    method: "POST",
-    contentType: "json",
-    body: {
-      username: values.username,
-      password: values.password,
-    },
-  });
+  const { data, status, error } = await useMyFetch<LoginResponse>(
+    "auth/login",
+    {
+      method: "POST",
+      contentType: "json",
+      body: {
+        username: values.username,
+        password: values.password,
+      },
+    }
+  );
 
   if (status.value !== "success") {
     toast.error(error.value?.data.message);
   } else {
-    useAppUser().storeUser(data.value);
+    useAppUser().storeUser(data.value.user);
     authCookie.setToken(data.value.token);
 
     toast.success("Seja bem-vindo de volta!", {
       onClose() {
+        if (data.value.user.isConfigure) {
+          navigateTo("/app/config");
+          return;
+        }
+
         navigateTo("/app");
       },
     });
@@ -49,6 +58,7 @@ definePageMeta({
 
 <template>
   <div class="wrapper login h-screen">
+    <!-- <ui-modal-restore /> -->
     <div class="h-full flex items-center justify-center p-6">
       <div class="card bg-neutral-800 max-w-xl rounded-xl">
         <div class="card-body">

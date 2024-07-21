@@ -55,6 +55,7 @@ onUnmounted(() => {
             </div>
 
             <button
+              v-if="canActive(['admin', 'super_analist'])"
               :disabled="!verifyLastUpdateDate(lastUpdate.lastUpdate)"
               @click="useAppModalStore().onNewModalImport(true)"
               class="px-3 py-2.5 rounded-lg bg-[#00a1e0] text-white flex justify-center items-center leading-none gap-2 disabled:bg-red-600/80 disabled:cursor-not-allowed disabled:opacity-40 hover:bg-[#0081b8]"

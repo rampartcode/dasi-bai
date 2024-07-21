@@ -11,6 +11,14 @@ export const useAppModalStore = defineStore("modais", () => {
   const modalResponse = ref<boolean>(false);
   const onModalResponse = (value: boolean) => (modalResponse.value = value);
 
+  const modalResetDataTools = ref<boolean>(false);
+  const onModalResetDataTools = (value: boolean) =>
+    (modalResetDataTools.value = value);
+
+  const modalResetDatabase = ref<boolean>(false);
+  const onModalResetDatabase = (value: boolean) =>
+    (modalResetDatabase.value = value);
+
   return {
     modalImport,
     onModalImport,
@@ -20,5 +28,9 @@ export const useAppModalStore = defineStore("modais", () => {
     onNewModalImport,
     modalResponse,
     onModalResponse,
+    modalResetDataTools,
+    onModalResetDataTools,
+    modalResetDatabase,
+    onModalResetDatabase,
   };
 });

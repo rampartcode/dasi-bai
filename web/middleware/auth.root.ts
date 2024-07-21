@@ -18,11 +18,11 @@ export default defineNuxtRouteMiddleware(async (from, to) => {
       }
 
       useAppUser().storeUser(data.value);
-      if (!data.value.isConfigure) {
+      if (data.value.isConfigure) {
         return;
       }
 
-      return navigateTo("/app/config", { replace: true });
+      return navigateTo("/app", { replace: true });
     } catch (error) {
       authCookie.deleteToken();
       return navigateTo("/auth/login", { replace: true });

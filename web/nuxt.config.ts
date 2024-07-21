@@ -42,7 +42,7 @@ export default defineNuxtConfig({
     preload: true,
     preconnect: true,
     families: {
-      Roboto: [300, 400, 500, 700, 900],
+      Inter: [300, 400, 500, 700, 900],
     },
   },
   runtimeConfig: {
