@@ -53,6 +53,7 @@ const hiddenPassword = ref(true);
 
 definePageMeta({
   layout: false,
+  middleware: ["auth-login"],
 });
 </script>
 

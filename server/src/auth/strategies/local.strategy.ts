@@ -6,10 +6,10 @@ import {
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
 import { AuthService } from '../auth.service';
-
-import * as ldapAuth from 'ldap-authentication';
+import { Client, SearchOptions } from 'ldapts';
 import { compareSync } from 'bcrypt';
 import { PrismaService } from 'src/libs/prisma';
+import { decrypt } from 'src/helpers/encrypt-decrypt';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -23,94 +23,87 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(username: string, password: string) {
-    try {
-      return await this.localAuth(username, password);
-    } catch (error) {
-      throw error;
-    }
+    return this.localAuth(username, password);
   }
 
-  async localAuth(username: string, psswd: string) {
-    try {
-      const user = await this.prisma.user.findFirst({
-        where: {
-          username,
-        },
-      });
+  private async localAuth(username: string, password: string) {
+    const user = await this.prisma.user.findFirst({
+      where: { username },
+    });
 
-      if (!user) {
-        throw new UnauthorizedException(
-          'Usuário não encontrado e/ou autorizado.',
-        );
-      }
-
-      if (!user.isConfigure) {
-        const usr = await this.ldapAuth(username, psswd);
-
-        if (!usr) {
-          await this.prisma.user.delete({
-            where: {
-              username,
-            },
-          });
-
-          throw new UnauthorizedException(
-            'Nome do usuário ou palavra-passe errdada.',
-          );
-        }
-
-        return usr;
-      }
-
-      const isPasswordMatched = compareSync(psswd, user.password);
-
-      if (!isPasswordMatched) {
-        throw new UnauthorizedException(
-          'Nome do usuário ou palavra-passe errdada.',
-        );
-      }
-
-      const { password, ...usr } = user;
-
-      return usr;
-    } catch (error) {
-      throw error;
+    if (!user) {
+      throw new UnauthorizedException(
+        'Usuário não encontrado e/ou autorizado.',
+      );
     }
+
+    if (!user.isConfigure) {
+      const ldapUser = await this.authenticateLdapUser(username, password);
+
+      if (!ldapUser) {
+        await this.prisma.user.delete({ where: { username } });
+        throw new UnauthorizedException(
+          'Nome do usuário ou palavra-passe errada.',
+        );
+      }
+
+      return user;
+    }
+
+    const isPasswordMatched = compareSync(password, user.password);
+
+    if (!isPasswordMatched) {
+      throw new UnauthorizedException(
+        'Nome do usuário ou palavra-passe errada.',
+      );
+    }
+
+    const { password: _, ...safeUser } = user;
+    return safeUser;
   }
 
-  async ldapAuth(username: string, password: string) {
+  private async authenticateLdapUser(username: string, password: string) {
+    const ldapSetting = await this.prisma.ldapSetting.findFirst();
+
+    if (!ldapSetting) {
+      throw new GatewayTimeoutException('Configuração do LDAP não encontrada.');
+    }
+
+    const adminPassword = decryptAdminPassword(ldapSetting.adminPassword);
+    const client = new Client({ url: ldapSetting.serverUrl });
+
     try {
-      const ldapSetting = await this.prisma.ldapSetting.findFirst();
+      await client.bind(ldapSetting.adminDn, adminPassword);
 
-      if (!ldapSetting) {
-        throw new GatewayTimeoutException(
-          'Configuração do LDAP não encontrada.',
-        );
-      }
-
-      const ldapConfig = {
-        ldapOpts: {
-          url: ldapSetting.serverUrl,
-        },
-        adminDn: ldapSetting.adminDn,
-        adminPassword: ldapSetting.adminPassword,
-        userSearchBase: ldapSetting.userSearchBase,
-        usernameAttribute: ldapSetting.usernameAttribute,
-        username: username,
-        userPassword: password,
+      const searchOptions: SearchOptions = {
+        scope: 'sub',
+        filter: `(${ldapSetting.usernameAttribute}=${username})`,
       };
 
-      const authenticated = await ldapAuth.authenticate(ldapConfig);
+      const { searchEntries } = await client.search(
+        ldapSetting.userSearchBase,
+        searchOptions,
+      );
 
-      if (!authenticated) {
-        throw new UnauthorizedException('Credenciais inválidas.');
+      if (searchEntries.length === 0) {
+        throw new UnauthorizedException('Usuário não encontrado no LDAP.');
       }
 
-      return authenticated;
+      const userDn = searchEntries[0].dn;
+      await client.bind(userDn, password);
+
+      return true;
     } catch (error) {
       throw new GatewayTimeoutException(
         'Não foi possível se conectar com o servidor LDAP.',
       );
+    } finally {
+      await client.unbind();
     }
   }
+}
+
+function decryptAdminPassword(adminPassword: string): string {
+  const [content, iv] = adminPassword.split('=');
+  return decrypt({ content, iv });
 }

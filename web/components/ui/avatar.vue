@@ -11,8 +11,10 @@ onClickOutside(modal, () => {
 });
 
 async function handleLogoutSession() {
-  logout();
-  navigateTo("/auth/login");
+  await authCookie.deleteToken();
+  await useAppUser().storeUser(null);
+  reloadNuxtApp();
+  // navigateTo('/auth/login', { replace: true })
 }
 
 const onOpenModalAvatar = () => {
@@ -35,7 +37,7 @@ const onOpenModalAvatar = () => {
         <span class="block text-white font-semibold leading-none">
           {{ user.username }}
         </span>
-        <span class="block text-white/70 leading-none">admin</span>
+        <span class="block text-white/70 leading-none">{{ user?.roles }}</span>
       </div>
     </button>
     <transition name="fade">
