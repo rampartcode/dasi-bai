@@ -7,25 +7,21 @@ import { PrismaService } from 'src/libs/prisma';
 import { CreateUserDTO } from './dto/create-user';
 import { Client, SearchOptions } from 'ldapts';
 import { decrypt } from 'src/helpers/encrypt-decrypt';
-
-import { authenticate } from 'ldap-authentication';
+import type { LdapSetting } from '@prisma/client';
 
 @Injectable()
 export class UserService {
+  private ldapClient: Client;
+
   constructor(private readonly prisma: PrismaService) {}
 
   async createUser(createUser: CreateUserDTO): Promise<void> {
-    try {
-      await this.ensureUserDoesNotExistInSystem(
-        createUser.username,
-        createUser.email,
-      );
-      await this.ensureUserExistsInLdap(createUser.username);
-
-      await this.prisma.user.create({ data: createUser });
-    } catch (error) {
-      throw error;
-    }
+    await this.ensureUserDoesNotExistInSystem(
+      createUser.username,
+      createUser.email,
+    );
+    await this.ensureUserExistsInLdap(createUser.email);
+    await this.prisma.user.create({ data: createUser });
   }
 
   private async ensureUserDoesNotExistInSystem(
@@ -37,26 +33,14 @@ export class UserService {
     });
 
     if (user) {
-      if (user.username === username) {
-        throw new UnprocessableEntityException('Usuário já existe no sistema.');
-      }
-      if (user.email === email) {
-        throw new UnprocessableEntityException(
-          'Endereço de email já está a ser usado.',
-        );
-      }
+      throw new UnprocessableEntityException('Usuário já existe no sistema.');
     }
   }
 
-  private async ensureUserExistsInLdap(username: string): Promise<void> {
-    const ldapServer = await this.prisma.ldapSetting.findFirst();
-    if (!ldapServer) {
-      throw new UnprocessableEntityException(
-        'Configuração do servidor LDAP não encontrada.',
-      );
-    }
+  private async ensureUserExistsInLdap(email: string): Promise<void> {
+    const ldapServer = await this.getLdapSettings();
+    const userDn = await this.findUserDn(email, ldapServer);
 
-    const userDn = await this.findUserDn(username, ldapServer);
     if (!userDn) {
       throw new NotFoundException(
         'Usuário não encontrado no LDAP e/ou usernameAttribute errado.',
@@ -64,35 +48,51 @@ export class UserService {
     }
   }
 
-  private async findUserDn(
-    username: string,
-    ldapServer,
-  ): Promise<string | null> {
-    const client = new Client({ url: ldapServer.serverUrl });
-    const adminPassword = decryptAdminPassword(ldapServer.adminPassword);
+  private async getLdapSettings(): Promise<LdapSetting> {
+    const ldapServer = await this.prisma.ldapSetting.findFirst();
+    if (!ldapServer) {
+      throw new UnprocessableEntityException(
+        'Configuração do servidor LDAP não encontrada.',
+      );
+    }
+    return ldapServer;
+  }
+
+  private async findUserDn(email: string, ldapServer: LdapSetting) {
+    if (!this.ldapClient) {
+      this.initLdapClient(ldapServer);
+    }
 
     try {
-      await client.bind(ldapServer.adminDn, adminPassword);
-
+      await this.bindLdapClient(ldapServer);
       const searchOptions: SearchOptions = {
         scope: 'sub',
-        filter: `(${ldapServer.usernameAttribute}=${username})`,
-        attributes: ['dn'],
+        filter: `(mail=${email})`,
+        attributes: ['cn', 'mail', 'uid'],
       };
 
-      const { searchEntries } = await client.search(
+      const { searchEntries } = await this.ldapClient.search(
         ldapServer.userSearchBase,
         searchOptions,
       );
 
-      return searchEntries.length > 0 ? (searchEntries[0].dn as string) : null;
+      return searchEntries[0];
     } finally {
-      await client.unbind();
+      await this.ldapClient.unbind();
     }
   }
-}
 
-function decryptAdminPassword(adminPassword: string): string {
-  const [content, iv] = adminPassword.split('=');
-  return decrypt({ content, iv });
+  private initLdapClient(ldapServer: LdapSetting): void {
+    this.ldapClient = new Client({ url: ldapServer.serverUrl, strictDN: true });
+  }
+
+  private async bindLdapClient(ldapServer: LdapSetting): Promise<void> {
+    const adminPassword = this.decryptAdminPassword(ldapServer.adminPassword);
+    await this.ldapClient.bind(ldapServer.adminDn, adminPassword);
+  }
+
+  private decryptAdminPassword(adminPassword: string): string {
+    const [content, iv] = adminPassword.split('=');
+    return decrypt({ content, iv });
+  }
 }
