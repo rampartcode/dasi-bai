@@ -49,13 +49,13 @@ export function useSidebarList() {
       icon: "bx:radio-circle",
       subItems: [],
     },
-    {
-      isTitle: false,
-      name: "Portnox",
-      link: "#",
-      icon: "bx:radio-circle",
-      subItems: [],
-    },
+    // {
+    //   isTitle: false,
+    //   name: "Portnox",
+    //   link: "#",
+    //   icon: "bx:radio-circle",
+    //   subItems: [],
+    // },
     {
       isTitle: true,
       name: "Configurações",

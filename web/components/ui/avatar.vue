@@ -30,14 +30,16 @@ const onOpenModalAvatar = () => {
     >
       <img
         src="../../assets/img/avatar.png"
-        class="w-full h-full xl:w-10 xl:h-10 rounded-full cursor-pointer"
+        class="w-full h-full xl:w-9 xl:h-9 rounded-full cursor-pointer"
         alt="Foto do perfil"
       />
       <div class="hidden flex-1 xl:flex flex-col gap-1 items-start">
-        <span class="block text-white font-semibold leading-none">
-          {{ user.username }}
+        <span class="block text-white font-semibold leading-none truncate">
+          {{ user.name }}
         </span>
-        <span class="block text-white/70 leading-none">{{ user?.roles }}</span>
+        <span class="block text-white/70 leading-none">
+          {{ getUserRole(user?.roles) }}
+        </span>
       </div>
     </button>
     <transition name="fade">
