@@ -1,11 +1,10 @@
 export function getUserRole(role: string): string {
-  if (role === "admin") {
-    return "Admin";
-  } else if (role === "super_analist") {
-    return "Supervisor";
-  } else if (role === "analista") {
-    return "Analista";
-  } else {
-    return "Executivo";
-  }
+  const roles: { [key: string]: string } = {
+    admin: "Admin",
+    super_analist: "Supervisor",
+    analist: "Analista",
+    executive: "Executivo",
+  };
+
+  return roles[role] || "Unknown Role";
 }
