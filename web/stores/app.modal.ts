@@ -19,6 +19,14 @@ export const useAppModalStore = defineStore("modais", () => {
   const onModalResetDatabase = (value: boolean) =>
     (modalResetDatabase.value = value);
 
+  const modalChangeRole = ref<Record<string, any> | undefined>(undefined);
+  const onModalChangeRole = (value: Record<string, any> | undefined) =>
+    (modalChangeRole.value = value);
+
+  const modalDeleteUser = ref<Record<string, any> | undefined>(undefined);
+  const onModalDeleteUser = (value: Record<string, any> | undefined) =>
+    (modalDeleteUser.value = value);
+
   return {
     modalImport,
     onModalImport,
@@ -32,5 +40,9 @@ export const useAppModalStore = defineStore("modais", () => {
     onModalResetDataTools,
     modalResetDatabase,
     onModalResetDatabase,
+    modalChangeRole,
+    onModalChangeRole,
+    modalDeleteUser,
+    onModalDeleteUser,
   };
 });

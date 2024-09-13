@@ -16,6 +16,10 @@
       @apply bg-white/15 rounded-xl;
     }
   }
+
+  select option {
+    @apply bg-neutral-800 rounded-xl hover:bg-slate-50;
+  }
 }
 
 h1 {
@@ -58,7 +62,7 @@ h5 {
 body {
   font-size: 14px;
   letter-spacing: 0.5px;
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   overflow-x: hidden;
 }
 
@@ -197,7 +201,7 @@ body {
   flex-direction: column;
 }
 
-.sidebar-wrapper .metismenu li+li {
+.sidebar-wrapper .metismenu li + li {
   margin-top: 5px;
 }
 
@@ -209,7 +213,7 @@ body {
   margin-bottom: 5px;
 }
 
-.sidebar-wrapper .metismenu>li {
+.sidebar-wrapper .metismenu > li {
   display: -webkit-box;
 
   display: -ms-flexbox;
@@ -291,7 +295,7 @@ body {
   padding: 8px 15px 8px 45px;
 }
 
-.sidebar-wrapper .metismenu .mm-active>a,
+.sidebar-wrapper .metismenu .mm-active > a,
 .sidebar-wrapper .metismenu a:active,
 .sidebar-wrapper .metismenu a:focus,
 .sidebar-wrapper .metismenu a:hover {
@@ -351,7 +355,10 @@ body {
     border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   }
 
-  .wrapper.toggled:not(.sidebar-hovered) .sidebar-wrapper .sidebar-header .logo-text {
+  .wrapper.toggled:not(.sidebar-hovered)
+    .sidebar-wrapper
+    .sidebar-header
+    .logo-text {
     display: none;
   }
 
@@ -363,7 +370,10 @@ body {
     width: 70px;
   }
 
-  .wrapper.toggled:not(.sidebar-hovered) .sidebar-wrapper .sidebar-header .toggle-icon {
+  .wrapper.toggled:not(.sidebar-hovered)
+    .sidebar-wrapper
+    .sidebar-header
+    .toggle-icon {
     display: none;
   }
 
@@ -380,7 +390,10 @@ body {
     justify-content: center;
   }
 
-  .wrapper.toggled:not(.sidebar-hovered) .sidebar-wrapper .metismenu .menu-title {
+  .wrapper.toggled:not(.sidebar-hovered)
+    .sidebar-wrapper
+    .metismenu
+    .menu-title {
     display: none;
   }
 
@@ -388,11 +401,17 @@ body {
     display: none;
   }
 
-  .wrapper.toggled:not(.sidebar-hovered) .sidebar-wrapper .metismenu li.menu-label {
+  .wrapper.toggled:not(.sidebar-hovered)
+    .sidebar-wrapper
+    .metismenu
+    li.menu-label {
     display: none;
   }
 
-  .wrapper.toggled:not(.sidebar-hovered) .sidebar-wrapper .metismenu .has-arrow:after {
+  .wrapper.toggled:not(.sidebar-hovered)
+    .sidebar-wrapper
+    .metismenu
+    .has-arrow:after {
     display: none;
   }
 
@@ -509,7 +528,7 @@ body {
   font-size: 16px;
 }
 
-.page-breadcrumb .breadcrumb-item+.breadcrumb-item::before {
+.page-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
   display: inline-block;
 
   padding-right: 0.5rem;
@@ -1597,9 +1616,11 @@ input::placeholder {
 }
 
 .topbar .navbar .dropdown-menu {
-  -webkit-animation: 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) 0s normal forwards 1 animdropdown;
+  -webkit-animation: 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) 0s normal forwards 1
+    animdropdown;
 
-  animation: 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) 0s normal forwards 1 animdropdown;
+  animation: 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) 0s normal forwards 1
+    animdropdown;
 }
 
 @-webkit-keyframes animdropdown {
@@ -1653,44 +1674,11 @@ input::placeholder {
 }
 
 .switcher-wrapper {
-  width: 280px;
-
-  height: 100%;
-
-  position: fixed;
-
-  right: -280px;
-
-  top: 0;
-
-  bottom: 0;
-
-  z-index: 16;
-
-  background: #111314;
-
-  border-left: 0 solid #d2d2d2;
-
-  box-shadow: 0 0.3rem 0.6rem rgba(0, 0, 0, 0.13);
-
-  transition: all 0.2s ease-out;
+  @apply w-[280px] h-full fixed right-[-280px] top-0 bottom-0 z-[16] bg-[#111314] border-l-0 border-gray-300 shadow-[0_0.3rem_0.6rem_rgba(0,0,0,0.13)] transition-all duration-200 ease-out;
 }
 
 .switcher-btn {
-  width: 40px;
-  height: 40px;
-  line-height: 40px;
-  font-size: 24px;
-  background: rgb(255 255 255 / 15%);
-  box-shadow: 0 0.3rem 0.6rem rgba(0, 0, 0, 0.13);
-  color: #fff;
-  text-align: center;
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
-  position: absolute;
-  top: 40%;
-  right: 100%;
-  cursor: pointer;
+  @apply w-10 h-10 leading-10 bg-white/15 shadow-[0_0.3rem_0.6rem_rgba(0,0,0,0.13)] text-white text-center rounded-tl-[10px] rounded-bl-[10px] absolute top-1/2 -translate-y-1/2 right-full cursor-pointer flex items-center justify-center;
 }
 
 .switcher-wrapper.switcher-toggled {
