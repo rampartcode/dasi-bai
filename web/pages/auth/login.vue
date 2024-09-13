@@ -3,6 +3,7 @@ import * as yup from "yup";
 import { toast } from "vue3-toastify";
 import { useForm } from "vee-validate";
 import type { LoginResponse } from "@/stores/app.user";
+import { Eye, EyeOff, LockOpen, LoaderCircle } from "lucide-vue-next";
 
 const { defineField, handleSubmit, errors, isSubmitting } = useForm({
   validationSchema: yup.object({
@@ -39,7 +40,7 @@ const onSubmit = handleSubmit(async (values) => {
     toast.success("Seja bem-vindo de volta!", {
       onClose() {
         if (data.value.user.isConfigure) {
-          navigateTo("/app/config");
+          navigateTo("/app/settings");
           return;
         }
 
@@ -59,7 +60,6 @@ definePageMeta({
 
 <template>
   <div class="wrapper login h-screen">
-    <!-- <ui-modal-restore /> -->
     <div class="h-full flex items-center justify-center p-6">
       <div class="card bg-neutral-800 max-w-xl rounded-xl">
         <div class="card-body">
@@ -69,6 +69,7 @@ definePageMeta({
 
               <h3 class="uppercase">Dasi Solution</h3>
             </div>
+
             <div class="relative text-center mb-4">
               <button
                 class="mx-auto uppercase relative top-3.5 text-white text-xs font-bold p-[5px] bg-black/50 backdrop-blur-lg rounded"
@@ -77,6 +78,7 @@ definePageMeta({
               </button>
               <hr class="opacity-20" />
             </div>
+
             <div class="form-body">
               <form @submit.prevent="onSubmit" class="row g-3">
                 <div class="col-12">
@@ -93,6 +95,7 @@ definePageMeta({
                   />
                   <span class="text-red-500">{{ errors.username }}</span>
                 </div>
+
                 <div class="col-12">
                   <label for="password" class="form-label"> Senha </label>
                   <div class="input-group" id="show_hide_password">
@@ -110,28 +113,27 @@ definePageMeta({
                       @click="hiddenPassword = !hiddenPassword"
                       class="input-group-text bg-transparent"
                     >
-                      <Icon v-if="!hiddenPassword" name="bx:hide" />
-                      <Icon v-if="hiddenPassword" name="bx:show" />
+                      <EyeOff v-if="!hiddenPassword" size="20" />
+                      <Eye v-if="hiddenPassword" size="20" />
                     </a>
                   </div>
                   <span class="text-red-500">{{ errors.password }}</span>
                 </div>
+
                 <div class="col-12">
                   <div class="d-grid">
                     <button
-                      :disabled="isSubmitting"
                       type="submit"
-                      class="btn btn-light"
+                      :disabled="isSubmitting"
+                      class="btn btn-light flex justify-center items-center gap-2"
                     >
-                      <Icon
+                      <LoaderCircle
                         v-show="isSubmitting"
-                        name="svg-spinners:270-ring-with-bg"
+                        size="20"
+                        class="animate-spin"
                       />
-                      <Icon
-                        v-show="!isSubmitting"
-                        name="bx:bxs-lock-open"
-                        size="22"
-                      />
+
+                      <LockOpen v-show="!isSubmitting" class="size-5" />
                       Entrar
                     </button>
                   </div>

@@ -1,13 +1,23 @@
 <script setup lang="ts">
+import {
+  House,
+  ChevronRight,
+  LayoutDashboard,
+  Activity,
+} from "lucide-vue-next";
 import type { IResponsePaloAlto } from "@/types/palo-alto.data";
+
+definePageMeta({
+  middleware: ["auth-routes"],
+});
 
 const { data: DATA } = await useMyFetch<IResponsePaloAlto>("data/palo-alto", {
   method: "GET",
 });
 
-useAppFilter().onChangeLoadState(false);
+const loading = ref(false);
 async function onSubmit(values: { start: Date; end: Date }) {
-  useAppFilter().onChangeLoadState(true);
+  loading.value = true;
   const { data } = await useMyFetch<IResponsePaloAlto>(
     `data/palo-alto?start=${values.start}&end=${values.end}`,
     {
@@ -15,46 +25,42 @@ async function onSubmit(values: { start: Date; end: Date }) {
     }
   );
 
-  useAppFilter().onChangeLoadState(false);
+  loading.value = false;
   DATA.value = data.value;
 }
 
 provide("data", DATA);
-definePageMeta({
-  middleware: ["auth-routes"],
-});
 </script>
 
 <template>
   <div class="page-content">
     <div class="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-      <div class="breadcrumb-title pe-3">Palo Alto</div>
       <div class="ps-3">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb mb-0 p-0">
             <li class="breadcrumb-item">
               <nuxt-link to="/">
-                <Icon name="bx:home-alt" size="20" />
+                <House size="20" />
               </nuxt-link>
             </li>
             <li class="mx-2">
-              <Icon name="bx:chevron-right" size="24" />
+              <ChevronRight size="24" />
             </li>
             <li>
-              <Icon name="bx:category" size="20" />
+              <LayoutDashboard size="20" />
             </li>
             <li class="mx-2">
-              <Icon name="bx:chevron-right" size="24" />
+              <ChevronRight size="24" />
             </li>
             <li class="breadcrumb-item active" aria-current="page">
-              AD Audi Plus
+              Palo Alto
             </li>
           </ol>
         </nav>
       </div>
     </div>
 
-    <ui-filter @on:submit="(values) => onSubmit(values)" />
+    <ui-filter @on:submit="(values) => onSubmit(values)" :searching="loading" />
 
     <hr class="my-4" />
 
@@ -87,14 +93,14 @@ definePageMeta({
       <div
         class="col"
         v-for="(content, idx) in DATA.th_content_name"
-        :key="content.name"
+        :key="idx"
       >
         <div class="card radius-10" :class="``">
           <div class="card-body">
             <div class="text-white flex items-center">
               <div>
                 <div class="mb-2">
-                  <Icon name="bx:pulse" class="text-white" size="20" />
+                  <Activity class="text-white" size="20" />
                 </div>
                 <p class="mb-1">{{ content.name }}</p>
                 <h3>

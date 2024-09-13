@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Shield } from "lucide-vue-next";
 import type { DATA } from "@/types/data";
 
 const colors = [
@@ -22,6 +23,8 @@ async function onSubmit(values: { start: Date; end: Date }) {
       method: "GET",
     }
   );
+
+  console.log(data.value);
 
   useAppFilter().onChangeLoadState(false);
   DATA.value = data.value;
@@ -228,7 +231,7 @@ definePageMeta({
           <div class="card-body">
             <div class="flex flex-col justify-center items-center">
               <div class="widgets-icons mb-3">
-                <Icon name="bx:shield-alt-2"></Icon>
+                <Shield />
               </div>
               <h4 class="my-1">
                 {{ DATA.checkpointIndicators.firewall.toLocaleString("de-DE") }}
@@ -243,7 +246,7 @@ definePageMeta({
           <div class="card-body">
             <div class="flex flex-col justify-center items-center">
               <div class="widgets-icons mb-3">
-                <Icon name="bx:shield-alt-2"></Icon>
+                <Shield />
               </div>
               <h4 class="my-1">
                 {{
@@ -260,7 +263,7 @@ definePageMeta({
           <div class="card-body">
             <div class="flex flex-col justify-center items-center">
               <div class="widgets-icons mb-3">
-                <Icon name="bx:shield-alt-2"></Icon>
+                <Shield />
               </div>
               <h4 class="my-1">
                 {{
@@ -277,7 +280,7 @@ definePageMeta({
           <div class="card-body">
             <div class="flex flex-col justify-center items-center">
               <div class="widgets-icons mb-3">
-                <Icon name="bx:shield-alt-2"></Icon>
+                <Shield />
               </div>
               <h4 class="my-1">
                 {{ DATA.checkpointIndicators.antibot.toLocaleString("de-DE") }}
@@ -292,7 +295,7 @@ definePageMeta({
           <div class="card-body">
             <div class="flex flex-col justify-center items-center">
               <div class="widgets-icons mb-3">
-                <Icon name="bx:shield-alt-2"></Icon>
+                <Shield />
               </div>
               <h4 class="my-1">
                 {{
@@ -398,11 +401,5 @@ definePageMeta({
         </div>
       </div>
     </div>
-
-    <div class="overlay toggle-icon"></div>
-
-    <a class="back-to-top border-4 border-white">
-      <Icon name="bxs:bx-up-arrow-alt" />
-    </a>
   </div>
 </template>

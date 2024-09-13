@@ -1,5 +1,10 @@
 <script setup lang="ts">
+import { House, ChevronRight, LayoutDashboard, Info } from "lucide-vue-next";
 import type { IResponseImperva } from "@/types/imperva.data";
+
+definePageMeta({
+  middleware: ["auth-routes"],
+});
 
 const colors = [
   "text-red-500",
@@ -14,9 +19,9 @@ const { data: DATA } = await useMyFetch<IResponseImperva>("data/imperva", {
   method: "GET",
 });
 
-useAppFilter().onChangeLoadState(false);
+const loading = ref(false);
 async function onSubmit(values: { start: Date; end: Date }) {
-  useAppFilter().onChangeLoadState(true);
+  loading.value = true;
   const { data } = await useMyFetch<IResponseImperva>(
     `data/imperva?start=${values.start}&end=${values.end}`,
     {
@@ -24,14 +29,11 @@ async function onSubmit(values: { start: Date; end: Date }) {
     }
   );
 
-  useAppFilter().onChangeLoadState(false);
+  loading.value = false;
   DATA.value = data.value;
 }
 
 provide("data", DATA);
-definePageMeta({
-  middleware: ["auth-routes"],
-});
 </script>
 
 <template>
@@ -43,17 +45,17 @@ definePageMeta({
           <ol class="breadcrumb mb-0 p-0">
             <li class="breadcrumb-item">
               <nuxt-link to="/">
-                <Icon name="bx:home-alt" size="20" />
+                <House size="20" />
               </nuxt-link>
             </li>
             <li class="mx-2">
-              <Icon name="bx:chevron-right" size="24" />
+              <ChevronRight size="24" />
             </li>
             <li>
-              <Icon name="bx:category" size="20" />
+              <LayoutDashboard size="20" />
             </li>
             <li class="mx-2">
-              <Icon name="bx:chevron-right" size="24" />
+              <ChevronRight size="24" />
             </li>
             <li class="breadcrumb-item active" aria-current="page">Imperva</li>
           </ol>
@@ -61,7 +63,7 @@ definePageMeta({
       </div>
     </div>
 
-    <ui-filter @on:submit="(values) => onSubmit(values)" />
+    <ui-filter @on:submit="(values) => onSubmit(values)" :searching="loading" />
 
     <hr class="my-3" />
 
@@ -78,7 +80,7 @@ definePageMeta({
                 </h4>
               </div>
               <div class="widgets-icons bg-white ms-auto">
-                <Icon name="bx:info-circle" :class="`${colors[idx]}`" />
+                <Info :class="`${colors[idx]}`" />
               </div>
             </div>
           </div>
