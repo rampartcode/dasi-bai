@@ -1,10 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateConfigDto } from './dto/create-config.dto';
 import { PrismaService } from 'src/libs/prisma';
-import * as ldapAuth from 'ldap-authentication';
 
-import { hashSync } from 'bcrypt';
 import { encrypt } from 'src/helpers/encrypt-decrypt';
+import { Client, type SearchOptions } from 'ldapts';
 
 @Injectable()
 export class ConfigService {
@@ -54,16 +53,19 @@ export class ConfigService {
       adminDn: createConfigDto.adminDn,
       adminPassword: createConfigDto.adminPassword,
       userSearchBase: createConfigDto.userSearchBase,
-      usernameAttribute: createConfigDto.usernameAttribute,
     };
 
-    const authenticated = await ldapAuth.authenticate(ldapConfig);
+    const client = new Client(ldapConfig.ldapOpts);
 
-    if (!authenticated) {
+    try {
+      await client.bind(ldapConfig.adminDn, ldapConfig.adminPassword);
+    } catch (error) {
       throw new UnauthorizedException('Credenciais inválidas.');
+    } finally {
+      await client.unbind();
     }
 
-    return;
+    return { message: 'Conexão e autenticação LDAP bem-sucedidas.' };
   }
 
   async resetDataTools(user: any) {

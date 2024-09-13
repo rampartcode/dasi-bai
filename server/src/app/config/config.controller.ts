@@ -19,7 +19,7 @@ export class ConfigController {
   }
 
   @Post('ldap-server/test')
-  testLdapServer(@Body() createConfigDto: any) {
+  testLdapServer(@Body() createConfigDto: CreateConfigDto) {
     return this.configService.testLdapServer(createConfigDto);
   }
 

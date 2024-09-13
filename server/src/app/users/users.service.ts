@@ -8,9 +8,10 @@ import { CreateUserDTO } from './dto/create-user';
 import { Client, SearchOptions } from 'ldapts';
 import { decrypt } from 'src/helpers/encrypt-decrypt';
 import type { LdapSetting } from '@prisma/client';
+import type { ChangeRoleDTO } from './dto/change-role';
 
 @Injectable()
-export class UserService {
+export class UsersService {
   private ldapClient: Client;
 
   constructor(private readonly prisma: PrismaService) {}
@@ -22,6 +23,77 @@ export class UserService {
     );
     await this.ensureUserExistsInLdap(createUser.email);
     await this.prisma.user.create({ data: createUser });
+  }
+
+  async findAll(params: {
+    page: number;
+    limit: number;
+    order: 'asc' | 'desc';
+  }) {
+    const skip = params.page > 0 ? params.limit * (params.page - 1) : 0;
+
+    const [data, total] = await Promise.all([
+      this.prisma.user.findMany({
+        where: {
+          isConfigure: false,
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          username: true,
+          roles: true,
+          createdAt: true,
+        },
+        skip,
+        take: params.limit,
+        orderBy: { name: params.order },
+      }),
+      this.prisma.user.count(),
+    ]);
+
+    const lastPage = Math.ceil(total / params.limit);
+
+    return {
+      data,
+      meta: {
+        currentPage: params.page,
+        limit: params.limit,
+        total,
+        lastPage,
+        prev: params.page > 1 ? params.page - 1 : null,
+        next: params.page < lastPage ? params.page + 1 : null,
+      },
+    };
+  }
+
+  async changeRole(changeRoleDto: ChangeRoleDTO) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: changeRoleDto.userId, isConfigure: false },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Utilizador não encontrado');
+    }
+
+    await this.prisma.user.update({
+      where: { id: changeRoleDto.userId },
+      data: { roles: changeRoleDto.role },
+    });
+
+    return;
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    const user = await this.prisma.user.findUnique({
+      where: { id, isConfigure: false },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Utilizador não encontrado');
+    }
+
+    await this.prisma.user.delete({ where: { id } });
   }
 
   private async ensureUserDoesNotExistInSystem(
