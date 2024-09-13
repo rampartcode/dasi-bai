@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { toast } from "vue3-toastify";
+import { X, LoaderCircleIcon } from "lucide-vue-next";
 
 const modal = computed(() => useAppModalStore().modalResetDatabase);
 function onCloseModal() {
@@ -42,9 +43,9 @@ async function onResetDatabase() {
 
           <button
             @click="onCloseModal"
-            class="w-8 h-8 border rounded-md leading-none hover:bg-neutral-700"
+            class="w-8 h-8 border rounded-md leading-none flex items-center justify-center hover:bg-neutral-700"
           >
-            <Icon name="bx:x" class="size-5" />
+            <X size="20" />
           </button>
         </div>
 
@@ -73,10 +74,10 @@ async function onResetDatabase() {
               class="bg-red-600 text-white font-medium rounded px-4 py-2 transition-all hover:bg-red-500 outline-none focus:outline-none"
             >
               {{ loading ? "" : "Continuar" }}
-              <Icon
+              <LoaderCircleIcon
                 v-show="loading"
-                name="svg-spinners:90-ring-with-bg"
-                class="size-5"
+                size="20"
+                class="animate-spin"
               />
             </button>
           </div>

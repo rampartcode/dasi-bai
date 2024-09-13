@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { SidebarItem } from "@types/sidebar.ts";
+import { House, Circle, Icon } from "lucide-vue-next";
 
 const { name, icon, isTitle, link, subItems, active } =
   defineProps<SidebarItem>();
@@ -19,7 +20,7 @@ const { name, icon, isTitle, link, subItems, active } =
         :class="`${subItems.length > 0 ? 'has-arrow' : ''}`"
       >
         <div class="parent-icon">
-          <Icon :name="icon" />
+          <component :is="icon" size="20" />
         </div>
         <div class="menu-title">{{ name }}</div>
       </nuxt-link>
@@ -27,7 +28,8 @@ const { name, icon, isTitle, link, subItems, active } =
       <ul class="mm-collapse" :class="{ 'mm-show': active === name }">
         <li v-for="item in subItems" :key="item.name">
           <nuxt-link :to="item.link" class="flex items-center gap-2">
-            <Icon :name="item.icon" />
+            <component :is="icon" size="16" class="size-4" />
+
             {{ item.name }}
           </nuxt-link>
         </li>

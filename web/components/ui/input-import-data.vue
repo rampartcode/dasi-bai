@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { Plus } from "lucide-vue-next";
+
 interface IInputProps {
   name: string;
   labelText: string;
@@ -24,7 +26,7 @@ const onClickButton = () => {
 };
 
 onMounted(() => {
-  inputFile.value?.addEventListener("change", (e: Event) => {
+  inputFile.value?.addEventListener("change", (e: any) => {
     const fileBefore = e.target.files[0];
 
     fileName.value = fileBefore.name;
@@ -45,8 +47,7 @@ onMounted(() => {
           class="p-1 px-2 flex items-center gap-1"
           :class="{ 'text-red-600': fileName }"
         >
-          <Icon
-            name="heroicons:plus"
+          <Plus
             size="20"
             class="transition-all"
             :class="{ 'rotate-45': fileName }"

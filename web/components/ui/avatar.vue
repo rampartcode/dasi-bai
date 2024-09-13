@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { CircleUserRound, Settings, LogOut } from "lucide-vue-next";
 import { onClickOutside } from "@vueuse/core";
 
 const { user, logout } = useAppUser();
@@ -14,7 +15,6 @@ async function handleLogoutSession() {
   await authCookie.deleteToken();
   await useAppUser().storeUser(null);
   reloadNuxtApp();
-  // navigateTo('/auth/login', { replace: true })
 }
 
 const onOpenModalAvatar = () => {
@@ -33,11 +33,11 @@ const onOpenModalAvatar = () => {
         class="w-full h-full xl:w-9 xl:h-9 rounded-full cursor-pointer"
         alt="Foto do perfil"
       />
-      <div class="hidden flex-1 xl:flex flex-col gap-1 items-start">
-        <span class="block text-white font-semibold leading-none truncate">
+      <div class="hidden flex-1 xl:block text-left space-y-1 truncate">
+        <p class="block text-white font-semibold leading-none truncate">
           {{ user.name }}
-        </span>
-        <span class="block text-white/70 leading-none">
+        </p>
+        <span class="block text-white/70 leading-none truncate">
           {{ getUserRole(user?.roles) }}
         </span>
       </div>
@@ -53,24 +53,21 @@ const onOpenModalAvatar = () => {
             to="#"
             class="text-sm px-4 py-1 flex items-center gap-2 hover:bg-white/15"
           >
-            <Icon name="heroicons:user" class="text-base" />
+            <CircleUserRound size="18" color="#FFFFFFE6" />
             Profile
           </nuxt-link>
           <nuxt-link
             to="#"
             class="text-sm px-4 py-1 flex items-center gap-2 hover:bg-white/15"
           >
-            <Icon name="heroicons:cog-6-tooth" class="text-base" />
+            <Settings size="18" color="#FFFFFFE6" />
             Settings
           </nuxt-link>
           <nuxt-link
             @click="handleLogoutSession"
             class="cursor-pointer text-sm px-4 py-1 flex items-center gap-2 hover:bg-white/15 border-t border-white/15"
           >
-            <Icon
-              name="heroicons:arrow-left-on-rectangle-20-solid"
-              class="text-base"
-            />
+            <LogOut size="18" color="#FFFFFFE6" />
             Logout
           </nuxt-link>
         </ul>

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { X, Mail, Phone } from "lucide-vue-next";
+
 const modal = computed(() => useAppModalStore().modalSupport);
 </script>
 
@@ -16,9 +18,9 @@ const modal = computed(() => useAppModalStore().modalSupport);
           <h3>Suporte</h3>
           <button
             @click="useAppModalStore().onModalSupport(false)"
-            class="w-8 h-8 border rounded-md leading-none hover:bg-neutral-700"
+            class="w-8 h-8 border rounded-md leading-none flex items-center justify-center hover:bg-neutral-700"
           >
-            <Icon name="bx:x" size="20" />
+            <X size="20" />
           </button>
         </div>
         <hr class="my-3" />
@@ -27,12 +29,12 @@ const modal = computed(() => useAppModalStore().modalSupport);
             Abaixo estão listadas as formas de entrar em contacto com o suporte
             técnico:
           </p>
-          <ul>
+          <ul class="space-y-2">
             <li class="flex items-center gap-3 mb-1">
-              <Icon name="bx:support" size="20" /> 949 227 949
+              <Phone size="20" /> 949 227 949
             </li>
             <li class="flex items-center gap-3">
-              <Icon name="bx:mail-send" size="20" /> geral@hanzolo.co.ao
+              <Mail size="20" /> geral@hanzolo.co.ao
             </li>
           </ul>
         </div>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Activity } from 'lucide-vue-next';
 import type { IAdAuditIndicators } from "~~/types/ad-audit.data";
 
 const colors = [
@@ -20,7 +21,7 @@ const data = inject<IAdAuditIndicators>("data");
           <div class="text-white flex items-center">
             <div>
               <div class="mb-2">
-                <Icon name="bx:pulse" class="text-white" size="20" />
+                <Activity class="text-white" size="20" />
               </div>
               <p class="mb-1">{{ failure.label }}</p>
               <h3>

@@ -1,9 +1,18 @@
 <script setup lang="ts">
 import * as yup from "yup";
 import { useForm } from "vee-validate";
+import { Search, LoaderCircle } from "lucide-vue-next";
 
 const emit = defineEmits(["on:submit"]);
-const loading = computed(() => useAppFilter().loading);
+
+const { searching } = withDefaults(
+  defineProps<{
+    searching: boolean;
+  }>(),
+  {
+    searching: false,
+  }
+);
 
 const { handleSubmit, errors, defineField } = useForm({
   validationSchema: yup.object({
@@ -69,9 +78,13 @@ const [end, endAttrs] = defineField("end");
                 type="submit"
                 class="bg-[#00a1e0] text-white w-full md:w-auto rounded-md flex gap-1 items-center py-2 px-3 focus:outline-none"
               >
-                <Icon name="bx:search" />
+                <LoaderCircle
+                  v-show="searching"
+                  size="18"
+                  class="animate-spin"
+                />
+                <Search v-show="!searching" size="18" />
                 <span> Filtrar </span>
-                <Icon v-show="loading" name="svg-spinners:ring-resize" />
               </button>
             </div>
           </div>

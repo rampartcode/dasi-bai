@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { Settings } from "lucide-vue-next";
+
 const switcherBtn = ref<HTMLElement | null>(null);
 const switcherBtnClose = ref<HTMLElement | null>(null);
 const switcherWrapper = ref<HTMLElement | null>(null);
@@ -29,7 +31,7 @@ onUnmounted(() => {
 <template>
   <div ref="switcherWrapper" class="switcher-wrapper">
     <div ref="switcherBtn" class="switcher-btn">
-      <Icon name="bx:cog" class="animate-spin-slow" />
+      <Settings class="animate-spin-slow" />
     </div>
     <div class="switcher-body">
       <div class="flex items-center">

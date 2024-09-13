@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { toast } from "vue3-toastify";
 import { onClickOutside } from "@vueuse/core";
-import type { ILastUpdate } from "@/types/data";
+import { X, LoaderCircle } from "lucide-vue-next";
 import { verifyLastUpdateDate } from "@/utils/verifyLastUpdateDate";
+import type { ILastUpdate } from "@/types/data";
 
 const lastUpdate = inject("lastUpdate") as ILastUpdate;
 
@@ -95,9 +96,9 @@ onUnmounted(() => {
             <div class="">
               <button
                 :disabled="!verifyLastUpdateDate()"
-                class="w-full py-2 bg-[#00a1e0] text-white rounded disabled:opacity-70 hover:bg-[#0081b8] disabled:cursor-not-allowed"
+                class="w-full py-2 bg-[#00a1e0] text-white rounded flex items-center justify-center disabled:opacity-70 hover:bg-[#0081b8] disabled:pointer-events-none"
               >
-                <Icon v-show="loading" name="svg-spinners:ring-resize" />
+                <LoaderCircle v-show="loading" size="20" class="animate-spin" />
                 <span v-show="!loading"> Concluir importação </span>
               </button>
             </div>

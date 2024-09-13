@@ -2,6 +2,7 @@
 import { toast } from "vue3-toastify";
 import { onClickOutside } from "@vueuse/core";
 import { verifyLastUpdateDate } from "@/utils/verifyLastUpdateDate";
+import { LoaderCircle } from "lucide-vue-next";
 
 const e = ref("");
 const modal = computed(() => useAppModalStore().newModalImport);
@@ -66,10 +67,11 @@ const onSubmit = async () => {
     return;
   }
 
-  toast.success("Dados importados com sucesso!!");
-  setTimeout(() => {
-    reloadNuxtApp();
-  }, 3500);
+  toast.success("Dados importados com sucesso!!", {
+    onClose: () => {
+      reloadNuxtApp();
+    },
+  });
 };
 
 onUnmounted(() => {
@@ -152,9 +154,9 @@ onUnmounted(() => {
             <div class="">
               <button
                 :disabled="!verifyLastUpdateDate()"
-                class="w-full py-2 bg-[#00a1e0] text-white rounded disabled:opacity-70 hover:bg-[#0081b8] disabled:cursor-not-allowed"
+                class="w-full py-2 bg-[#00a1e0] text-white flex justify-center items-center rounded disabled:opacity-70 hover:bg-[#0081b8] disabled:cursor-not-allowed"
               >
-                <Icon v-show="loading" name="svg-spinners:ring-resize" />
+                <LoaderCircle v-show="loading" size="20" class="animate-spin" />
                 <span v-show="!loading"> Concluir importação </span>
               </button>
             </div>

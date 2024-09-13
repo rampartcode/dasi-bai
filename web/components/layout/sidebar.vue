@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { CloudUpload, Headphones, ArrowLeftToLine } from "lucide-vue-next";
+
 const sidebarList = useSidebarList();
 const sidebarWrapper = ref<HTMLElement | null>(null);
 
@@ -70,7 +72,7 @@ onUnmounted(() => {
         <h4 class="logo-text">Banco BAI</h4>
       </nuxt-link>
       <div class="toggle-icon ms-auto" @click="onToggleSidebar">
-        <Icon name="bx:bxs-arrow-to-left" />
+        <ArrowLeftToLine size="20" />
       </div>
     </div>
 
@@ -92,7 +94,7 @@ onUnmounted(() => {
       >
         <nuxt-link id="nav" class="cursor-pointer">
           <div class="parent-icon">
-            <Icon name="bx:cloud-download" />
+            <CloudUpload size="20" />
           </div>
           <div class="menu-title">Adicionar Respostas</div>
         </nuxt-link>
@@ -100,7 +102,7 @@ onUnmounted(() => {
       <li @click="useAppModalStore().onModalSupport(true)">
         <nuxt-link id="nav" class="cursor-pointer">
           <div class="parent-icon">
-            <Icon name="bx:support" />
+            <Headphones size="20" />
           </div>
           <div class="menu-title">Suporte</div>
         </nuxt-link>

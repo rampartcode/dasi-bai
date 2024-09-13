@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { CloudUpload, Menu } from "lucide-vue-next";
 import type { ILastUpdate } from "@/types/data";
 
 const lastUpdate = inject("lastUpdate") as ILastUpdate;
@@ -38,20 +39,18 @@ onUnmounted(() => {
         <div class="w-full flex items-center justify-between gap-2 xl:gap-3">
           <div class="flex-1 flex items-center justify-between">
             <div ref="mobileToggleMenu" class="mobile-toggle-menu">
-              <Icon name="bx:menu" />
+              <Menu />
             </div>
 
-            <div ref="searchBar" class="search-bar flex-grow-1">
-              <div class="position-relative search-bar-box">
-                <span class="uppercase">
-                  Última actualização dos dados:
-                  {{
-                    typeof lastUpdate.lastUpdate === "string"
-                      ? new Date(lastUpdate.lastUpdate).toLocaleString()
-                      : "Sem dados cadastrados"
-                  }}
-                </span>
-              </div>
+            <div class="hidden lg:block relative search-bar-box">
+              <span class="uppercase">
+                Última actualização:
+                {{
+                  typeof lastUpdate.lastUpdate === "string"
+                    ? new Date(lastUpdate.lastUpdate).toLocaleString()
+                    : "Sem dados cadastrados"
+                }}
+              </span>
             </div>
 
             <button
@@ -60,7 +59,7 @@ onUnmounted(() => {
               @click="useAppModalStore().onNewModalImport(true)"
               class="px-3 py-2.5 rounded-lg bg-[#00a1e0] text-white flex justify-center items-center leading-none gap-2 disabled:bg-red-600/80 disabled:cursor-not-allowed disabled:opacity-40 hover:bg-[#0081b8]"
             >
-              <Icon name="bx:import" class="size-5" />
+              <CloudUpload size="20" />
               <span class="leading-none"> Importar Dados </span>
             </button>
           </div>

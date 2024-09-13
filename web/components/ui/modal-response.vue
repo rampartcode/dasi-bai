@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { toast } from "vue3-toastify";
 import { onClickOutside } from "@vueuse/core";
+import { X, LoaderCircleIcon } from "lucide-vue-next";
 
 const modal = computed(() => useAppModalStore().modalResponse);
 const target = ref<HTMLElement | null>(null);
@@ -30,16 +31,16 @@ const validateIncidentData = (file: File): boolean => {
 };
 
 const onSubmit = async () => {
-  if (!validateIncidentData(form.value.incidents)) {
+  if (!validateIncidentData(form.value.incidents as File)) {
     return;
   }
 
   loading.value = true;
-
   const formData = new FormData();
-  formData.append("incidents", form.value.incidents);
+  formData.append("incidents", form.value.incidents as File);
 
   const success = await sendData(formData);
+  loading.value = false;
   if (success) {
     reloadNuxtApp();
   }
@@ -77,14 +78,17 @@ async function sendData(formData: FormData) {
           <h2 class="text-lg font-bold text-white">
             Importar Respostas à Incidentes
           </h2>
+
           <button
             @click="useAppModalStore().onModalResponse(false)"
-            class="w-8 h-8 border rounded-md leading-none hover:bg-neutral-700"
+            class="w-8 h-8 border rounded-md leading-none flex items-center justify-center hover:bg-neutral-700"
           >
-            <Icon name="bx:x" size="20" />
+            <X size="20" />
           </button>
         </div>
+
         <hr class="my-2" />
+
         <div>
           <form id="Data" @submit.prevent="onSubmit">
             <ui-input-import-data
@@ -92,7 +96,9 @@ async function sendData(formData: FormData) {
               label-text="Respostas"
               @on:input="(e) => (form.incidents = e)"
             />
+
             <hr class="my-3" />
+
             <div class="my-1 text-center">
               <transition>
                 <span
@@ -103,13 +109,18 @@ async function sendData(formData: FormData) {
                 </span>
               </transition>
             </div>
+
             <div class="">
               <button
                 :disabled="!form.incidents || loading"
-                class="w-full py-2 bg-[#00a1e0] text-white rounded disabled:opacity-70 hover:bg-[#0081b8] disabled:cursor-not-allowed"
+                class="w-full py-2 bg-[#00a1e0] text-white rounded flex items-center justify-center disabled:opacity-70 hover:bg-[#0081b8] disabled:pointer-events-none"
                 :class="{ 'opacity-50 cursor-not-allowed': loading }"
               >
-                <Icon v-show="loading" name="svg-spinners:ring-resize" />
+                <LoaderCircleIcon
+                  v-show="loading"
+                  size="20"
+                  class="animate-spin"
+                />
                 <span v-show="!loading"> Concluir importação </span>
               </button>
             </div>
