@@ -33,10 +33,6 @@ provide("lastUpdate", DATA);
 
       <layout-switcher-theme />
 
-      <a href="javaScript:;" class="back-to-top">
-        <Icon name="bx:bxs-up-arrow-alt"></Icon>
-      </a>
-
       <layout-footer />
     </div>
     <ui-modal-support />
