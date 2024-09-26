@@ -7,9 +7,7 @@ export function processFile(file: Express.Multer.File) {
 
     createReadStream(fileString)
       .pipe(csv())
-      .on('data', (row) => {
-        console.log(row);
-      });
+      .on('data', (row) => {});
   } catch (error) {
     throw error;
   }

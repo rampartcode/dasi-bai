@@ -30,7 +30,6 @@ export class DataService {
   }) {
     try {
       if (files.ad_audit) {
-        console.log(files.ad_audit);
       }
       // if (files.ad_audit) {
       //   const file = files.ad_audit[0];

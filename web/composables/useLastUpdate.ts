@@ -12,8 +12,6 @@ export async function useLastUpdate() {
       method: "GET",
     });
 
-    console.log(data.value);
-
     DATA.value = data.value;
   });
 

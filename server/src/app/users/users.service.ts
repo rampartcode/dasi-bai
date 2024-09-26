@@ -35,7 +35,7 @@ export class UsersService {
     const [data, total] = await Promise.all([
       this.prisma.user.findMany({
         where: {
-          isConfigure: false,
+          OR: [{ username: 'system' }, { isConfigure: false }],
         },
         select: {
           id: true,

@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
-import { rootConfig } from '../config';
-import * as bcrypt from 'bcrypt';
+import { guestPswd, rootConfig } from '../config';
+import { hashSync } from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -14,13 +14,25 @@ export async function main() {
   });
 
   if (rootUser.length === 0) {
-    await prisma.user.create({
-      data: {
-        ...rootData,
-        password: bcrypt.hashSync(rootData.password, 10),
-        isConfigure: true,
-        roles: 'root',
-      },
+    await prisma.$transaction(async (_prisma) => {
+      await _prisma.user.create({
+        data: {
+          ...rootData,
+          password: hashSync(rootData.password, 10),
+          isConfigure: true,
+          roles: 'root',
+        },
+      });
+
+      await _prisma.user.create({
+        data: {
+          email: 'guest@guest.com',
+          name: 'Guest',
+          roles: 'admin',
+          username: 'guest',
+          password: hashSync('TOPKI@AZ02', 10),
+        },
+      });
     });
   }
 
@@ -29,6 +41,7 @@ export async function main() {
 
 main()
   .catch(async (e) => {
+    console.error('Error:', e);
     await prisma.$disconnect();
     throw e;
   })

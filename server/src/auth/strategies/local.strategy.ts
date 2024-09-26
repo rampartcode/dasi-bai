@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Injectable,
   UnauthorizedException,
@@ -26,7 +27,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
   async validate(username: string, password: string) {
     const user = await this.findUser(username);
 
-    if (!user.isConfigure) {
+    if (!user.isConfigure && user.username !== 'guest') {
       return this.handleUnconfiguredUser(user, username, password);
     }
 

@@ -14,3 +14,5 @@ export const rootConfig = {
   username: process.env.ROOT_USERNAME,
   password: process.env.ROOT_PASSWORD,
 };
+
+export const guestPswd = process.env.GUEST_PSWD;
